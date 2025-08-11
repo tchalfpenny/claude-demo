@@ -104,3 +104,5 @@ Key settings in `backend/config.py`:
 - Conversation sessions are memory-only (not persisted)
 - Course deduplication prevents reprocessing existing materials
 - Tool execution follows Anthropic's function calling protocol
+- always use uv to run the server do not use pip directly
+- make sure to use uv to manage all dependencies
