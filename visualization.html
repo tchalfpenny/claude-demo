@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cool Animated Visualization</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: 'Arial', sans-serif;
+            overflow: hidden;
+        }
+
+        .container {
+            text-align: center;
+            position: relative;
+        }
+
+        .title {
+            color: white;
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            animation: fadeInDown 1s ease-out;
+        }
+
+        .visualization {
+            position: relative;
+            width: 400px;
+            height: 400px;
+            margin: 0 auto;
+        }
+
+        .orbit {
+            position: absolute;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            animation: rotate 20s linear infinite;
+        }
+
+        .orbit:nth-child(1) {
+            width: 100px;
+            height: 100px;
+            top: 150px;
+            left: 150px;
+            animation-duration: 8s;
+        }
+
+        .orbit:nth-child(2) {
+            width: 200px;
+            height: 200px;
+            top: 100px;
+            left: 100px;
+            animation-duration: 12s;
+            animation-direction: reverse;
+        }
+
+        .orbit:nth-child(3) {
+            width: 300px;
+            height: 300px;
+            top: 50px;
+            left: 50px;
+            animation-duration: 16s;
+        }
+
+        .orbit:nth-child(4) {
+            width: 400px;
+            height: 400px;
+            top: 0;
+            left: 0;
+            animation-duration: 20s;
+            animation-direction: reverse;
+        }
+
+        .planet {
+            position: absolute;
+            border-radius: 50%;
+            animation: rotate 20s linear infinite reverse;
+        }
+
+        .planet-1 {
+            width: 15px;
+            height: 15px;
+            background: #ff6b6b;
+            box-shadow: 0 0 20px #ff6b6b;
+            top: -7.5px;
+            left: 42.5px;
+            animation-duration: 8s;
+        }
+
+        .planet-2 {
+            width: 20px;
+            height: 20px;
+            background: #4ecdc4;
+            box-shadow: 0 0 25px #4ecdc4;
+            top: -10px;
+            left: 90px;
+            animation-duration: 12s;
+            animation-direction: normal;
+        }
+
+        .planet-3 {
+            width: 18px;
+            height: 18px;
+            background: #45b7d1;
+            box-shadow: 0 0 22px #45b7d1;
+            top: -9px;
+            left: 141px;
+            animation-duration: 16s;
+        }
+
+        .planet-4 {
+            width: 25px;
+            height: 25px;
+            background: #f9ca24;
+            box-shadow: 0 0 30px #f9ca24;
+            top: -12.5px;
+            left: 187.5px;
+            animation-duration: 20s;
+            animation-direction: normal;
+        }
+
+        .center {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            background: radial-gradient(circle, #ffffff, #e0e0e0);
+            border-radius: 50%;
+            top: 170px;
+            left: 170px;
+            box-shadow: 0 0 40px rgba(255,255,255,0.8);
+            animation: pulse 3s ease-in-out infinite;
+        }
+
+        .stats {
+            position: absolute;
+            bottom: -100px;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: space-around;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .stat {
+            text-align: center;
+            animation: fadeInUp 1.5s ease-out;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            animation: countUp 2s ease-out;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+            animation: float 4s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px);
+                opacity: 0.7;
+            }
+            50% {
+                transform: translateY(-20px);
+                opacity: 1;
+            }
+        }
+
+        .controls {
+            position: absolute;
+            bottom: -150px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">Cool Animated Visualization</h1>
+        
+        <div class="visualization">
+            <div class="particles" id="particles"></div>
+            
+            <div class="orbit">
+                <div class="planet planet-1"></div>
+            </div>
+            <div class="orbit">
+                <div class="planet planet-2"></div>
+            </div>
+            <div class="orbit">
+                <div class="planet planet-3"></div>
+            </div>
+            <div class="orbit">
+                <div class="planet planet-4"></div>
+            </div>
+            
+            <div class="center"></div>
+        </div>
+
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-value" id="orbits">4</div>
+                <div>Orbits</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="planets">4</div>
+                <div>Planets</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="speed">∞</div>
+                <div>Speed</div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="btn" onclick="toggleAnimation()">Pause/Play</button>
+            <button class="btn" onclick="changeSpeed()">Speed Up</button>
+            <button class="btn" onclick="addParticles()">Add Stars</button>
+        </div>
+    </div>
+
+    <script>
+        let animationPaused = false;
+        let currentSpeed = 1;
+        
+        // Create floating particles
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            for (let i = 0; i < 20; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 4 + 's';
+                particle.style.animationDuration = (3 + Math.random() * 2) + 's';
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        function toggleAnimation() {
+            const orbits = document.querySelectorAll('.orbit, .planet, .center');
+            animationPaused = !animationPaused;
+            
+            orbits.forEach(element => {
+                element.style.animationPlayState = animationPaused ? 'paused' : 'running';
+            });
+        }
+
+        function changeSpeed() {
+            currentSpeed = currentSpeed >= 3 ? 1 : currentSpeed + 1;
+            const orbits = document.querySelectorAll('.orbit');
+            const planets = document.querySelectorAll('.planet');
+            
+            orbits.forEach((orbit, index) => {
+                const baseDuration = [8, 12, 16, 20][index];
+                orbit.style.animationDuration = (baseDuration / currentSpeed) + 's';
+            });
+            
+            planets.forEach((planet, index) => {
+                const baseDuration = [8, 12, 16, 20][index];
+                planet.style.animationDuration = (baseDuration / currentSpeed) + 's';
+            });
+            
+            document.getElementById('speed').textContent = currentSpeed + 'x';
+        }
+
+        function addParticles() {
+            createParticles();
+        }
+
+        // Initialize
+        createParticles();
+
+        // Add click interaction
+        document.querySelector('.center').addEventListener('click', function() {
+            this.style.transform = 'scale(1.3)';
+            setTimeout(() => {
+                this.style.transform = 'scale(1)';
+            }, 200);
+        });
+
+        // Animate stats on load
+        setTimeout(() => {
+            const stats = document.querySelectorAll('.stat-value');
+            stats.forEach(stat => {
+                if (stat.textContent !== '∞') {
+                    const value = parseInt(stat.textContent);
+                    let current = 0;
+                    const increment = value / 30;
+                    const timer = setInterval(() => {
+                        current += increment;
+                        if (current >= value) {
+                            current = value;
+                            clearInterval(timer);
+                        }
+                        stat.textContent = Math.floor(current);
+                    }, 50);
+                }
+            });
+        }, 1000);
+    </script>
+</body>
+</html>
