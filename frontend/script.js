@@ -5,7 +5,7 @@ const API_URL = '/api';
 let currentSessionId = null;
 
 // DOM elements
-let chatMessages, chatInput, sendButton, totalCourses, courseTitles;
+let chatMessages, chatInput, sendButton, totalCourses, courseTitles, newChatButton;
 
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
@@ -15,6 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
     sendButton = document.getElementById('sendButton');
     totalCourses = document.getElementById('totalCourses');
     courseTitles = document.getElementById('courseTitles');
+    newChatButton = document.getElementById('newChatButton');
     
     setupEventListeners();
     createNewSession();
@@ -28,6 +29,9 @@ function setupEventListeners() {
     chatInput.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') sendMessage();
     });
+    
+    // New chat functionality
+    newChatButton.addEventListener('click', clearCurrentChat);
     
     
     // Suggested questions
@@ -122,10 +126,21 @@ function addMessage(content, type, sources = null, isWelcome = false) {
     let html = `<div class="message-content">${displayContent}</div>`;
     
     if (sources && sources.length > 0) {
+        // Process sources to create clickable links
+        const processedSources = sources.map(source => {
+            // Check if source has embedded link
+            const linkMatch = source.match(/^(.+?) \[LINK:(.+?)\]$/);
+            if (linkMatch) {
+                const [, sourceName, url] = linkMatch;
+                return `<a href="${url}" target="_blank" rel="noopener noreferrer" class="source-link">${sourceName}</a>`;
+            }
+            return escapeHtml(source);
+        });
+        
         html += `
             <details class="sources-collapsible">
                 <summary class="sources-header">Sources</summary>
-                <div class="sources-content">${sources.join(', ')}</div>
+                <div class="sources-content">${processedSources.join(', ')}</div>
             </details>
         `;
     }
@@ -150,6 +165,29 @@ async function createNewSession() {
     currentSessionId = null;
     chatMessages.innerHTML = '';
     addMessage('Welcome to the Course Materials Assistant! I can help you with questions about courses, lessons and specific content. What would you like to know?', 'assistant', null, true);
+}
+
+async function clearCurrentChat() {
+    // Clear session on backend if we have one
+    if (currentSessionId) {
+        try {
+            await fetch(`${API_URL}/sessions/${currentSessionId}/clear`, {
+                method: 'DELETE'
+            });
+        } catch (error) {
+            console.warn('Failed to clear session on backend:', error);
+        }
+    }
+    
+    // Reset frontend state
+    currentSessionId = null;
+    chatMessages.innerHTML = '';
+    addMessage('Welcome to the Course Materials Assistant! I can help you with questions about courses, lessons and specific content. What would you like to know?', 'assistant', null, true);
+    
+    // Focus the input field
+    if (chatInput) {
+        chatInput.focus();
+    }
 }
 
 // Load course statistics
