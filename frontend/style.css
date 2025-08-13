@@ -481,6 +481,14 @@ header h1 {
     text-align: left;
 }
 
+.new-chat-button::before {
+    content: '▶';
+    display: inline-block;
+    margin-right: 0.5rem;
+    transition: transform 0.2s ease;
+    font-size: 0.75rem;
+}
+
 .new-chat-button:focus {
     color: var(--primary-color);
 }
