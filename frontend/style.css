@@ -5,8 +5,48 @@
     padding: 0;
 }
 
-/* CSS Variables */
+/* CSS Variables - Dark Theme (Default) */
 :root {
+    --primary-color: #2563eb;
+    --primary-hover: #1d4ed8;
+    --background: #0f172a;
+    --surface: #1e293b;
+    --surface-hover: #334155;
+    --text-primary: #f1f5f9;
+    --text-secondary: #94a3b8;
+    --border-color: #334155;
+    --user-message: #2563eb;
+    --assistant-message: #374151;
+    --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+    --radius: 12px;
+    --focus-ring: rgba(37, 99, 235, 0.2);
+    --welcome-bg: #1e3a5f;
+    --welcome-border: #2563eb;
+}
+
+/* CSS Variables - Light Theme (Class and Data Attribute Support) */
+:root.light-theme,
+:root[data-theme="light"] {
+    --primary-color: #2563eb;
+    --primary-hover: #1d4ed8;
+    --background: #ffffff;
+    --surface: #f8fafc;
+    --surface-hover: #e2e8f0;
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+    --border-color: #cbd5e1;
+    --user-message: #2563eb;
+    --assistant-message: #f1f5f9;
+    --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.15);
+    --radius: 12px;
+    --focus-ring: rgba(37, 99, 235, 0.2);
+    --welcome-bg: #dbeafe;
+    --welcome-border: #2563eb;
+}
+
+/* CSS Variables - Dark Theme (Class and Data Attribute Support) */
+:root.dark-theme,
+:root[data-theme="dark"] {
     --primary-color: #2563eb;
     --primary-hover: #1d4ed8;
     --background: #0f172a;
@@ -34,6 +74,25 @@ body {
     overflow: hidden;
     margin: 0;
     padding: 0;
+    transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
+                color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Smooth transitions for all theme-sensitive elements */
+* {
+    transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Preserve hover and focus transitions for interactive elements */
+button, input, .suggested-item, .new-chat-button, .theme-toggle-button {
+    transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Container - Full Screen */
@@ -44,6 +103,80 @@ body {
     flex-direction: column;
     margin: 0;
     padding: 0;
+    position: relative;
+}
+
+/* Theme Toggle Button */
+.theme-toggle-container {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    z-index: 1000;
+}
+
+.theme-toggle-button {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 1px solid var(--border-color);
+    background: var(--surface);
+    color: var(--text-primary);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    transition: all 0.3s ease;
+    box-shadow: var(--shadow);
+    backdrop-filter: blur(10px);
+}
+
+.theme-toggle-button:hover {
+    background: var(--surface-hover);
+    border-color: var(--primary-color);
+    transform: scale(1.05);
+    box-shadow: 0 6px 20px -2px rgba(37, 99, 235, 0.3);
+}
+
+.theme-toggle-button:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px var(--focus-ring), var(--shadow);
+}
+
+.theme-toggle-button:active {
+    transform: scale(0.95);
+}
+
+/* Theme Icons */
+.theme-icon {
+    position: absolute;
+    transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    color: var(--text-primary);
+}
+
+.theme-icon.sun-icon {
+    opacity: 0;
+    transform: rotate(180deg) scale(0.5);
+}
+
+.theme-icon.moon-icon {
+    opacity: 1;
+    transform: rotate(0deg) scale(1);
+}
+
+/* Light Theme - Show Sun, Hide Moon */
+:root.light-theme .theme-icon.sun-icon,
+:root[data-theme="light"] .theme-icon.sun-icon {
+    opacity: 1;
+    transform: rotate(0deg) scale(1);
+}
+
+:root.light-theme .theme-icon.moon-icon,
+:root[data-theme="light"] .theme-icon.moon-icon {
+    opacity: 0;
+    transform: rotate(-180deg) scale(0.5);
 }
 
 /* Header - Hidden */
@@ -83,6 +216,7 @@ header h1 {
     padding: 1.5rem;
     overflow-y: auto;
     flex-shrink: 0;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
 /* Custom Scrollbar for Sidebar */
@@ -119,6 +253,7 @@ header h1 {
     overflow: hidden;
     padding: 0;
     background: var(--background);
+    transition: background-color 0.3s ease;
 }
 
 /* Chat Container - Centered with Max Width */
@@ -131,6 +266,7 @@ header h1 {
     width: 100%;
     max-width: 800px;
     margin: 0;
+    transition: background-color 0.3s ease;
 }
 
 /* Chat Messages */
@@ -142,6 +278,7 @@ header h1 {
     flex-direction: column;
     gap: 1rem;
     background: var(--background);
+    transition: background-color 0.3s ease;
 }
 
 /* Custom Scrollbar */
@@ -160,6 +297,46 @@ header h1 {
 
 .chat-messages::-webkit-scrollbar-thumb:hover {
     background: var(--text-secondary);
+}
+
+/* Light Theme Scrollbar Enhancements */
+:root.light-theme .chat-messages::-webkit-scrollbar-thumb,
+:root[data-theme="light"] .chat-messages::-webkit-scrollbar-thumb {
+    background: #94a3b8;
+}
+
+:root.light-theme .chat-messages::-webkit-scrollbar-thumb:hover,
+:root[data-theme="light"] .chat-messages::-webkit-scrollbar-thumb:hover {
+    background: #64748b;
+}
+
+:root.light-theme .sidebar::-webkit-scrollbar-thumb,
+:root[data-theme="light"] .sidebar::-webkit-scrollbar-thumb {
+    background: #94a3b8;
+}
+
+:root.light-theme .sidebar::-webkit-scrollbar-thumb:hover,
+:root[data-theme="light"] .sidebar::-webkit-scrollbar-thumb:hover {
+    background: #64748b;
+}
+
+/* Ensure proper theme consistency for all UI elements */
+:root.light-theme .stat-item,
+:root[data-theme="light"] .stat-item {
+    background: var(--background);
+    border-color: var(--border-color);
+}
+
+:root.light-theme .source-link,
+:root[data-theme="light"] .source-link {
+    background: rgba(37, 99, 235, 0.1);
+    border-color: rgba(37, 99, 235, 0.3);
+}
+
+:root.light-theme .source-link:hover,
+:root[data-theme="light"] .source-link:hover {
+    background: rgba(37, 99, 235, 0.15);
+    border-color: rgba(37, 99, 235, 0.5);
 }
 
 /* Message Styles */
@@ -204,6 +381,7 @@ header h1 {
     background: var(--surface);
     color: var(--text-primary);
     border-bottom-left-radius: 4px;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 /* Message metadata */
@@ -316,6 +494,27 @@ header h1 {
     padding: 0;
 }
 
+/* Light Theme Code Block Enhancements */
+:root.light-theme .message-content code,
+:root[data-theme="light"] .message-content code {
+    background-color: rgba(148, 163, 184, 0.15);
+    color: var(--text-primary);
+}
+
+:root.light-theme .message-content pre,
+:root[data-theme="light"] .message-content pre {
+    background-color: rgba(148, 163, 184, 0.15);
+    border: 1px solid var(--border-color);
+}
+
+:root.light-theme .message-content blockquote,
+:root[data-theme="light"] .message-content blockquote {
+    border-left-color: var(--primary-color);
+    background-color: rgba(37, 99, 235, 0.05);
+    padding: 0.75rem;
+    border-radius: 4px;
+}
+
 .message-content blockquote {
     border-left: 3px solid var(--primary);
     padding-left: 1rem;
@@ -353,6 +552,7 @@ header h1 {
     background: var(--background);
     border-top: 1px solid var(--border-color);
     flex-shrink: 0;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
 /* Chat Input */
@@ -364,7 +564,7 @@ header h1 {
     border-radius: 24px;
     color: var(--text-primary);
     font-size: 0.95rem;
-    transition: all 0.2s ease;
+    transition: all 0.3s ease;
 }
 
 #chatInput:focus {
