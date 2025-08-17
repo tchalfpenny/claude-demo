@@ -26,6 +26,27 @@ uv sync
 echo "ANTHROPIC_API_KEY=your_key_here" > .env
 ```
 
+### Code Quality Commands
+```bash
+# Format code with black and isort
+./scripts/format.sh
+
+# Lint code with flake8
+./scripts/lint.sh
+
+# Type check with mypy
+./scripts/typecheck.sh
+
+# Run all quality checks (format, lint, typecheck, test)
+./scripts/quality.sh
+
+# Individual commands (alternative approach)
+uv run black backend/ --line-length 88
+uv run isort backend/ --profile black
+uv run flake8 backend/ --max-line-length=88 --extend-ignore=E203,W503
+uv run mypy backend/ --ignore-missing-imports
+```
+
 ### Development Access Points
 - Web Interface: http://localhost:8000
 - API Documentation: http://localhost:8000/docs
