@@ -5,7 +5,7 @@ const API_URL = '/api';
 let currentSessionId = null;
 
 // DOM elements
-let chatMessages, chatInput, sendButton, totalCourses, courseTitles, newChatButton;
+let chatMessages, chatInput, sendButton, totalCourses, courseTitles, newChatButton, themeToggle;
 
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
@@ -16,8 +16,11 @@ document.addEventListener('DOMContentLoaded', () => {
     totalCourses = document.getElementById('totalCourses');
     courseTitles = document.getElementById('courseTitles');
     newChatButton = document.getElementById('newChatButton');
+    themeToggle = document.getElementById('themeToggle');
     
+    initializeTheme();
     setupEventListeners();
+    updateThemeToggleLabel();
     createNewSession();
     loadCourseStats();
 });
@@ -33,6 +36,16 @@ function setupEventListeners() {
     // New chat functionality
     newChatButton.addEventListener('click', clearCurrentChat);
     
+    // Theme toggle functionality
+    themeToggle.addEventListener('click', toggleTheme);
+    
+    // Keyboard navigation for theme toggle
+    themeToggle.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            toggleTheme();
+        }
+    });
     
     // Suggested questions
     document.querySelectorAll('.suggested-item').forEach(button => {
@@ -227,3 +240,90 @@ async function loadCourseStats() {
         }
     }
 }
+
+// Theme Management Functions
+function initializeTheme() {
+    const savedTheme = localStorage.getItem('theme');
+    const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    
+    // Use saved theme if available, otherwise use system preference (defaulting to dark)
+    const initialTheme = savedTheme || (prefersDarkMode ? 'dark' : 'light');
+    
+    // Apply theme using both class and data-theme attribute for flexibility
+    setTheme(initialTheme);
+    
+    // Save the initial theme if not already saved
+    if (!savedTheme) {
+        localStorage.setItem('theme', initialTheme);
+    }
+}
+
+function setTheme(theme) {
+    const documentElement = document.documentElement;
+    const body = document.body;
+    
+    // Remove existing theme classes and data attributes
+    documentElement.classList.remove('light-theme', 'dark-theme');
+    documentElement.removeAttribute('data-theme');
+    if (body) {
+        body.removeAttribute('data-theme');
+    }
+    
+    // Apply new theme
+    if (theme === 'light') {
+        documentElement.classList.add('light-theme');
+        documentElement.setAttribute('data-theme', 'light');
+        if (body) {
+            body.setAttribute('data-theme', 'light');
+        }
+    } else {
+        documentElement.classList.add('dark-theme');
+        documentElement.setAttribute('data-theme', 'dark');
+        if (body) {
+            body.setAttribute('data-theme', 'dark');
+        }
+    }
+}
+
+function toggleTheme() {
+    const isLightMode = document.documentElement.classList.contains('light-theme');
+    
+    const newTheme = isLightMode ? 'dark' : 'light';
+    
+    // Apply the new theme with smooth transition
+    setTheme(newTheme);
+    
+    // Save the preference
+    localStorage.setItem('theme', newTheme);
+    
+    // Update aria-label for accessibility
+    updateThemeToggleLabel();
+    
+    // Trigger a custom event for theme change
+    document.dispatchEvent(new CustomEvent('themeChanged', {
+        detail: { theme: newTheme }
+    }));
+}
+
+function updateThemeToggleLabel() {
+    const isLightMode = document.documentElement.classList.contains('light-theme');
+    const newLabel = isLightMode 
+        ? 'Switch to dark theme' 
+        : 'Switch to light theme';
+    
+    if (themeToggle) {
+        themeToggle.setAttribute('aria-label', newLabel);
+        themeToggle.setAttribute('title', newLabel);
+    }
+}
+
+// Listen for system theme changes
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+    // Only auto-switch if user hasn't manually set a preference
+    const savedTheme = localStorage.getItem('theme');
+    if (!savedTheme) {
+        const systemTheme = e.matches ? 'dark' : 'light';
+        setTheme(systemTheme);
+        updateThemeToggleLabel();
+    }
+});
