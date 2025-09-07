@@ -179,9 +179,13 @@ button, input, .suggested-item, .new-chat-button, .theme-toggle-button {
     transform: rotate(-180deg) scale(0.5);
 }
 
-/* Header - Hidden */
+/* Header */
 header {
-    display: none;
+    padding: 2rem 2rem 1.5rem;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border-color);
+    text-align: center;
+    flex-shrink: 0;
 }
 
 header h1 {
